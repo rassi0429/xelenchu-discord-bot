@@ -1,0 +1,29 @@
+{
+  "name": "xelenchu-discord-bot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "tsc && node dist/index.js",
+    "deploy-commands": "tsc && node dist/deploy-commands.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rassi0429/xelenchu-discord-bot.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rassi0429/xelenchu-discord-bot/issues"
+  },
+  "homepage": "https://github.com/rassi0429/xelenchu-discord-bot#readme",
+  "dependencies": {
+    "@types/node": "^24.2.1",
+    "discord.js": "^14.21.0",
+    "dotenv": "^17.2.1",
+    "typescript": "^5.9.2"
+  }
+}
