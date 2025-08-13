@@ -1,0 +1,9 @@
+services:
+  bot:
+    build: .
+    container_name: xelenchu-discord-bot
+    restart: always
+    env_file:
+      - .env
+    environment:
+      - NODE_ENV=production
