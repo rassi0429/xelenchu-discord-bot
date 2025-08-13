@@ -38,13 +38,13 @@ client.on(Events.InteractionCreate, async (interaction) => {
             .addComponents(
                 new ButtonBuilder()
                     .setCustomId('create_channel')
-                    .setLabel('参加する！')
+                    .setLabel('先生になる！')
                     .setStyle(ButtonStyle.Primary)
                     .setEmoji('🙋')
             );
 
         await interaction.channel?.send({
-            content: '下の参加するボタンを押して、ロールをもらいましょう！',
+            content: '下の参加するボタンを押して、あなたも先生になりましょう！',
             components: [row]
         });
 
@@ -68,9 +68,38 @@ client.on(Events.InteractionCreate, async (interaction) => {
                 return;
             }
 
-            const member = interaction.member;
+            const member = interaction.member as any;
             if (!member) {
                 await interaction.editReply('メンバー情報が取得できません。');
+                return;
+            }
+
+            // ロールが存在するかチェック、なければ作成
+            let channelCreatedRole = guild.roles.cache.get(config.channelCreatedRoleId);
+            if (!channelCreatedRole) {
+                try {
+                    channelCreatedRole = await guild.roles.create({
+                        name: 'サポートチャンネル作成済み',
+                        color: 0x00AE86,
+                        reason: 'サポートチャンネル作成管理用ロール'
+                    });
+                    
+                    // 作成したロールIDを.envファイルに保存するようユーザーに通知
+                    console.log(`新しいロールが作成されました。ID: ${channelCreatedRole.id}`);
+                    console.log(`このIDを.envファイルのCHANNEL_CREATED_ROLE_IDに設定してください。`);
+                    
+                    // config.channelCreatedRoleIdを更新
+                    config.channelCreatedRoleId = channelCreatedRole.id;
+                } catch (error) {
+                    console.error('ロール作成エラー:', error);
+                    await interaction.editReply('ロールの作成中にエラーが発生しました。');
+                    return;
+                }
+            }
+
+            // すでにロールを持っているかチェック
+            if (member.roles.cache.has(channelCreatedRole.id)) {
+                await interaction.editReply('すでにサポートチャンネルを作成済みです。一人一つまでしか作成できません。');
                 return;
             }
 
@@ -80,7 +109,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
                 return;
             }
 
-            const channelName = `support-${interaction.user.username}`;
+            const channelName = `${interaction.user.username}`;
             
             const channel = await guild.channels.create({
                 name: channelName,
@@ -110,9 +139,12 @@ client.on(Events.InteractionCreate, async (interaction) => {
                 ],
             });
 
+            // ロールを付与
+            await member.roles.add(channelCreatedRole.id);
+
             await interaction.editReply(`提出・サポートチャンネル ${channel} が作成されました！`);
             
-            await channel.send(`${interaction.user}さん、提出・サポートチャンネルへようこそ！\nこのチャンネルは、あなたと、おまとめ係の人しか見れなくなっています。ふしぎ文章の提出、個人的な質問などを受付します！`);
+            await channel.send(`${interaction.user}先生！提出・サポートチャンネルへようこそ！\nこのチャンネルは、あなたと、おまとめ係の人しか見れないチャンネルです。ふしぎ文章の提出、個人的な質問などを受付します！\n\n 文章を書く人のための専用ツールをつくりました！　https://tategaki.kokoa.dev/ \n 改ページや、文章のレイアウトを確認しながら書くことができます！ \n このエディタでできない、画像や漫画、ほかのスタイルでの文章で提出することもできます！その場合は、このチャンネルでお知らせください！`);
 
         } catch (error) {
             console.error('チャンネル作成エラー:', error);

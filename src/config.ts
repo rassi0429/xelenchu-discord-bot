@@ -8,4 +8,5 @@ export const config = {
     categoryId: process.env.CATEGORY_ID!,
     supportRoleId: process.env.SUPPORT_ROLE_ID!,
     actionChannelId: process.env.ACTION_CHANNEL_ID!,
+    channelCreatedRoleId: process.env.CHANNEL_CREATED_ROLE_ID!,
 };
