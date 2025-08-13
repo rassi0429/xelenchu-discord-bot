@@ -20,19 +20,38 @@ client.on(Events.InteractionCreate, async (interaction) => {
     const { commandName } = interaction;
 
     if (commandName === 'setup') {
+        // ロールチェック
+        if (!interaction.inGuild()) {
+            await interaction.reply({ content: 'このコマンドはサーバー内でのみ使用できます。', ephemeral: true });
+            return;
+        }
+
+        const member = interaction.member as any;
+        const requiredRoleId = '1388860811136471141';
+        
+        if (!member.roles.cache.has(requiredRoleId)) {
+            await interaction.reply({ content: 'このコマンドを実行する権限がありません。', ephemeral: true });
+            return;
+        }
+
         const row = new ActionRowBuilder<ButtonBuilder>()
             .addComponents(
                 new ButtonBuilder()
                     .setCustomId('create_channel')
-                    .setLabel('Action')
+                    .setLabel('参加する！')
                     .setStyle(ButtonStyle.Primary)
-                    .setEmoji('🎫')
+                    .setEmoji('🙋')
             );
 
-        await interaction.reply({
-            content: 'Actionボタンをクリックしてサポートチャンネルを作成してください。',
+        await interaction.channel?.send({
+            content: '下の参加するボタンを押して、ロールをもらいましょう！',
             components: [row]
         });
+
+        await interaction.reply({
+            content: "OK",
+            ephemeral: true
+        })
     }
 });
 
@@ -91,9 +110,9 @@ client.on(Events.InteractionCreate, async (interaction) => {
                 ],
             });
 
-            await interaction.editReply(`サポートチャンネル ${channel} が作成されました！`);
+            await interaction.editReply(`提出・サポートチャンネル ${channel} が作成されました！`);
             
-            await channel.send(`${interaction.user}さん、サポートチャンネルへようこそ！\nサポートスタッフがまもなく対応いたします。`);
+            await channel.send(`${interaction.user}さん、提出・サポートチャンネルへようこそ！\nこのチャンネルは、あなたと、おまとめ係の人しか見れなくなっています。ふしぎ文章の提出、個人的な質問などを受付します！`);
 
         } catch (error) {
             console.error('チャンネル作成エラー:', error);

@@ -1,10 +1,11 @@
-import { REST, Routes, SlashCommandBuilder } from 'discord.js';
+import { REST, Routes, SlashCommandBuilder, PermissionFlagsBits } from 'discord.js';
 import { config } from './config';
 
 const commands = [
     new SlashCommandBuilder()
         .setName('setup')
         .setDescription('Actionボタンを含むメッセージを送信します')
+        .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
         .toJSON()
 ];
 
