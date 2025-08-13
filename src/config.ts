@@ -9,4 +9,5 @@ export const config = {
     supportRoleId: process.env.SUPPORT_ROLE_ID!,
     actionChannelId: process.env.ACTION_CHANNEL_ID!,
     channelCreatedRoleId: process.env.CHANNEL_CREATED_ROLE_ID!,
+    errorWebhookUrl: process.env.ERROR_WEBHOOK_URL!,
 };
